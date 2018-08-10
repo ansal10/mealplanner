@@ -1,0 +1,85 @@
+.meal-card-container {
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  margin-bottom: 10px;
+  padding: 5px 10px;
+  background: $white;
+
+  .meal-image-container {
+    .meal-image {
+      width: 100%;
+    }
+  }
+
+  .meal-info-container {
+    .meal-title {
+      font-weight: 600;
+      font-size: 1.4rem;
+    }
+    .meal-location {
+      font-size: 1.2rem;
+      color: #777;
+    }
+    .meal-area {
+      font-size: 1.2rem;
+      color: #777;
+    }
+    .meal-rate {
+      font-size: 1.2rem;
+      color: #777;
+    }
+    .meal-furnishing-status {
+      font-weight: 600;
+      font-size: 1.4rem;
+    }
+  }
+}
+
+@media all and (min-width: 960px) {
+  .meal-card-container {
+
+    .meal-image-container {
+      .meal-image {
+      }
+    }
+
+    .meal-info-container {
+      .meal-title {
+        font-size: 2rem;
+        margin-top: 10px;
+      }
+      .meal-location {
+        font-size: 1.8rem;
+        margin-top: 10px;
+      }
+      .meal-area {
+        font-size: 1.8rem;
+        margin-top: 10px;
+      }
+      .meal-rate {
+        font-size: 1.8rem;
+        margin-top: 10px;
+      }
+      .meal-furnishing-status {
+        font-size: 1.8rem;
+        margin-top: 10px;
+      }
+    }
+
+  }
+}
+
+@media all and (max-width: 959px) and (min-width: 600px) {
+  .arrow-indicator {
+    width: 5rem;
+  }
+}
+
+@media all and (max-width: 599px) and (min-width: 320px) {
+  .arrow-indicator {
+    width: 5rem;
+  }
+}

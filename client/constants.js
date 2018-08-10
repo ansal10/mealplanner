@@ -1,0 +1,9 @@
+exports.appName = 'MyMealo'
+
+exports.actions = {
+    FETCH_MEAL: 'FETCH_MEAL',
+    FETCH_MEALS: 'FETCH_MEALS',
+    FETCH_USER_DATA: 'FETCH_USER_DATA',
+    FETCH_OTHER_USER_DATA: 'FETCH_OTHER_USER_DATA',
+    CLEAR_USER_DATA: 'CLEAR_USER_DATA',
+}
