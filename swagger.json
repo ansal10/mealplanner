@@ -1,0 +1,963 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Yet Another Node.js Blogg Application API",
+    "description": "Yet Another Node.js Blogg Application API",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "localhost:3000",
+  "basePath": "/api/v1",
+  "tags": [
+    {
+      "name": "Users",
+      "description": "API for users in the system"
+    },
+    {
+      "name": "Meal",
+      "description": "API for the meal in the system"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/user/signup": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Create new user in system",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "body",
+            "description": "User that we want to create",
+            "schema": {
+              "properties":{
+                "email": {
+                  "type": "string",
+                  "uniqueItems": true,
+                  "example": "test@gmail.com"
+                },
+                "password":{
+                  "type": "string",
+                  "example": "pass1234"
+                },
+                "name": {
+                  "type": "string",
+                  "example": "full name"
+                },
+                "sex": {
+                  "type": "string",
+                  "enum": [
+                    "male",
+                    "female",
+                    "other"
+                  ],
+                  "example": "sex"
+                },
+                "role": {
+                  "type": "string",
+                  "enum": [
+                    "consumer"
+                  ],
+                  "example": "consumer"
+                },
+                "calorieGoal":{
+                  "type": "integer",
+                  "example": 1000,
+                  "description": "Value of his calorie goal ( optional , default to 1 )"
+                },
+                "managerId": {
+                  "type": "integer",
+                  "example": 768,
+                  "description": "ID of his manager ( optional , default to no manager assigned )"
+                }
+              }
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "New user is created",
+            "schema": {
+              "$ref": "#/definitions/SuccessUserResponse"
+            }
+          },
+          "40x": {
+            "description": "When user creation is failed",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/user/login": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Login the user",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "body",
+            "description": "User that we want to login",
+            "schema": {
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "anas.ansal10@gmail.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "pass1234"
+                }
+              }
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Logged in success full",
+            "schema": {
+              "$ref": "#/definitions/SuccessUserResponse"
+            }
+          },
+          "40x": {
+            "description": "Logged in failed",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/user": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "List of users",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "page number, Default to Zero"
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "single email or list of emails separated by comma and no space"
+          },
+          {
+            "name": "role",
+            "in": "query",
+            "description": "single role or list of roles separated by comma and no space"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "single status or list of status separated by comma an no space"
+          },
+          {
+            "name": "sex",
+            "in": "query",
+            "description": "single sex or list of sex separated by comma an no space"
+          },
+          {
+            "managerId": "sex",
+            "in": "query",
+            "description": "list of managerids seperated by comma, fetch users who are under these managers"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "List of user with page size of 50",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/DetailedUser"
+                  }
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "Fetching failed",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/user/{userId}": {
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "description": "ID of user that we want to find",
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get user with given ID",
+        "responses": {
+          "200": {
+            "description": "User is found",
+            "schema": {
+              "properties": {
+                "success": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/definitions/DetailedUser"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "User is not found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update user with give ID",
+        "tags": [
+          "Users"
+        ],
+        "parameters": [
+          {
+            "name": "user",
+            "in": "body",
+            "description": "User with new values of properties",
+            "schema": {
+              "$ref": "#/definitions/DetailedUser"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User is Updates",
+            "schema": {
+              "properties": {
+                "success": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/definitions/DetailedUser"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "delete":{
+        "tags":[
+          "Users"
+        ],
+        "summary": "Delete user with given ID ( only admin can )",
+        "responses": {
+          "200": {
+            "description": "User is Deleted",
+            "schema": {
+              "properties": {
+                "success": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/definitions/DetailedUser"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "User is not found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/user/logout": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Logout user",
+        "parameters": [],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Email verification sent",
+            "schema": {
+              "$ref": "#definitions/SuccessUserResponse"
+            }
+          },
+          "4xx": {
+            "description": "Verification Failed",
+            "schema": {
+              "$ref": "#definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/user/verify_email": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Verify the email",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Email"
+          },
+          {
+            "name": "emailToken",
+            "in": "query",
+            "description": "Email Token sended via email"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Email verified",
+            "schema": {
+              "$ref": "#definitions/SuccessUserResponse"
+            }
+          },
+          "4xx": {
+            "description": "Verification Failed",
+            "schema": {
+              "$ref": "#definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/user/details": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Get details of logged in user",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "User details",
+            "schema": {
+              "$ref": "#definitions/DetailedUser"
+            }
+          },
+          "4xx": {
+            "description": "User not logged in",
+            "schema": {
+              "$ref": "#definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/user/email_confirmation": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Request server to send email for Verification",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Email"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Email verification sent",
+            "schema": {
+              "$ref": "#definitions/SuccessUserResponse"
+            }
+          },
+          "4xx": {
+            "description": "Verification Failed",
+            "schema": {
+              "$ref": "#definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/user/password_reset": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Request for password reset Token to reset password",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Email"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Email verified",
+            "schema": {
+              "$ref": "#definitions/SuccessUserResponse"
+            }
+          },
+          "4xx": {
+            "description": "Verification Failed",
+            "schema": {
+              "$ref": "#definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "definitions": "Reset the password",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "body",
+            "schema": {
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "anas.ansal10@gmail.com",
+                  "description": "Enter your email"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "pass1234",
+                  "description": "new password"
+                },
+                "passwordToken": {
+                  "type": "string",
+                  "example": "12349583",
+                  "description": "Password reset token sent to your mail"
+                }
+              }
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Email verified",
+            "schema": {
+              "$ref": "#definitions/SuccessUserResponse"
+            }
+          },
+          "4xx": {
+            "description": "Verification Failed",
+            "schema": {
+              "$ref": "#definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/meal": {
+      "post": {
+        "tags": [
+          "Meal"
+        ],
+        "description": "Create a new Meal with provided details",
+        "parameters": [
+          {
+            "name": "meal",
+            "in": "body",
+            "description": "Meal that we want to create",
+            "schema": {
+              "$ref": "#/definitions/Meal"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "New meal is created",
+            "schema": {
+              "$ref": "#/definitions/SuccessUserResponse"
+            }
+          },
+          "4xx": {
+            "description": "When meal creation is failed",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/meal/{mealId}": {
+      "parameters": [
+        {
+          "name": "mealId",
+          "in": "path",
+          "required": true,
+          "description": "ID of meal that we want to find",
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": [
+          "Meal"
+        ],
+        "summary": "Get meal details of the meal with ID",
+        "responses": {
+          "200": {
+            "description": "Meal is found",
+            "schema": {
+              "properties": {
+                "success": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/definitions/Meal"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "Meal is not found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update meal with given ID",
+        "tags": [
+          "Meal"
+        ],
+        "parameters": [
+          {
+            "name": "meal",
+            "in": "body",
+            "description": "Meal with updates values",
+            "schema": {
+              "$ref": "#/definitions/Meal"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Meal is Updated",
+            "schema": {
+              "properties": {
+                "success": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/definitions/Meal"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "Meal is not found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "delete":{
+        "summary": "Delete meal with given ID",
+        "tags": ["Meal"],
+        "responses": {
+          "200": {
+            "description": "Meal is deleted",
+            "schema": {
+              "properties": {
+                "success": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "Meal is not found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/meal/search": {
+      "post": {
+        "tags": [
+          "Meal"
+        ],
+        "description": "Search meal based on parameters",
+        "parameters": [
+          {
+            "name": "meal",
+            "in": "body",
+            "description": "Search parameters",
+            "schema": {
+              "$ref": "#definitions/Meal Search"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number , defaults to ZERO"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Fetched a list of meals matching search params",
+            "schema": {
+              "properties": {
+                "success": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#definitions/Meal"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "4xx": {
+            "description": "Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "DetailedUser": {
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "email": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "name": {
+          "type": "string"
+        },
+        "sex": {
+          "type": "string",
+          "enum": [
+            "male",
+            "female",
+            "other"
+          ]
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "admin",
+            "manager",
+            "consumer"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "active",
+            "inactive"
+          ]
+        },
+        "calorieGoal":{
+          "type": "integer",
+          "example": 100,
+          "description": "Value of his calorie goal ( optional , default to 1 )"
+        },
+        "managerId": {
+          "type": "integer",
+          "example": 100,
+          "description": "ID of his manager ( optional , default to no manager assigned )"
+        },
+        "jwt":{
+          "type":"string",
+          "example": "kewopfjewopfjnewfnewofnewfinewoinewinfeowinfewoinfew",
+          "description": "Authentication token either setup in cookie or headers for authentication"
+        },
+        "createdAt": {
+          "type": "string",
+          "example": "ISO Format date"
+        },
+        "updatedAt": {
+          "type": "string",
+          "example": "ISO Format date"
+        }
+      }
+    },
+    "Meal": {
+      "properties": {
+        "title": {
+          "type": "string",
+          "example": "Lovely breakfast",
+          "description": "Title with length of range (10, 50)"
+        },
+        "description": {
+          "type": "string",
+          "example": "That was a lovely breakfast on monday morning",
+          "description": "Title with length of range (10, 1000)"
+        },
+        "calories": {
+          "type": "double",
+          "example": 1000.0,
+          "description": "Calories in range (1, 10000)"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "breakfast",
+            "lunch",
+            "snacks",
+            "dinner",
+            "others"
+          ]
+        },
+        "items": {
+          "type": "array",
+          "description": "List of items you had",
+          "example": [
+            "boiled eggs",
+            "potato mash"
+          ]
+        },
+        "time":{
+          "type": "string",
+          "example": "13:03",
+          "description": "Valid HH:mm format of time ( 02:35 ) or ( 21:06 )"
+        },
+        "day":{
+          "type": "string",
+          "description": "Valid day name in lowercase",
+          "example": "sunday"
+        },
+        "date":{
+          "type": "string",
+          "example":"2018-03-12",
+          "description": "Valid YYYY-MM-DD format date ( 2018-03-14 )"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Valid ISO date , Not required for creating"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Valid ISO date, Not required for creating"
+        },
+        "status":{
+          "type": "string",
+          "example": "below",
+          "description": " Values specifying his goal needs ( exact, over, below ), Not required in creating"
+        }
+      }
+    },
+    "Meal Search": {
+      "properties": {
+        "type": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "breakfast",
+            "dinner",
+            "lunch",
+            "snacks",
+            "others"
+          ],
+          "description": "Search meal in above types only"
+        },
+        "time": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "12:00",
+            "16:00"
+          ],
+          "description": "Search meal in above time range only"
+        },
+        "day": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "sunday",
+            "monday",
+            "wednesday"
+          ],
+          "description": "Search meals in above days only"
+        },
+        "date": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "2018-04-19",
+            "2018-08-18"
+          ],
+          "description": "Search meals in between above dates range only"
+        },
+        "UserId":{
+          "type": "array",
+          "items":{
+            "type": "integer"
+          },
+          "example": [
+            12,45,67,87
+          ],
+          "description": "Search meals for above users only , provided he can access their meals"
+        }
+      }
+    },
+    "SuccessResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "string"
+        }
+      }
+    },
+    "SuccessUserResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "Success message"
+            }
+          }
+        }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}
